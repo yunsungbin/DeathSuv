@@ -6,9 +6,9 @@ public class projectile : MonoBehaviour
 {
     private MoveMent moveMent;
     private Transform target;
-    private int damage;
+    private float damage;
 
-    public void SetUp(Transform target, int damage)
+    public void SetUp(Transform target, float damage)
     {
         moveMent = GetComponent<MoveMent>();
         this.target = target;

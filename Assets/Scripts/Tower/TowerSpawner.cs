@@ -7,9 +7,11 @@ public enum WeaponState {  SearchTarget = 0, AttackToTarget }
 public class TowerSpawner : MonoBehaviour
 {
     [SerializeField]
-    private GameObject towerPrefab;
-    [SerializeField]
-    private int towerBuildGold = 50; //건설 사용되는 골드
+    private TowerTemplate towerTemplate;
+    //[SerializeField]
+    //private GameObject towerPrefab;
+    //[SerializeField]
+    //private int towerBuildGold = 50; //건설 사용되는 골드
     [SerializeField]
     private EnemySpawner enemySpawner; //적 리스트 정보
     [SerializeField]
@@ -17,7 +19,7 @@ public class TowerSpawner : MonoBehaviour
 
     public void SpawnTower(Transform tileTransform)
     {
-        if(towerBuildGold > playerGold.CurGold)
+        if(towerTemplate.weapon[0].cost > playerGold.CurGold)
         {
             return;
         }
@@ -30,10 +32,12 @@ public class TowerSpawner : MonoBehaviour
 
         tile.IsBuildTower = true;
 
-        playerGold.CurGold -= towerBuildGold;
+        playerGold.CurGold -= towerTemplate.weapon[0].cost;
 
-        GameObject clone = Instantiate(towerPrefab, tileTransform.position, Quaternion.identity);
+        Vector3 pos = tileTransform.position + Vector3.back;
 
-        clone.GetComponent<TowerWeapon>().SetUp(enemySpawner);
+        GameObject clone = Instantiate(towerTemplate.towerPrefab, pos, Quaternion.identity);
+
+        clone.GetComponent<TowerWeapon>().SetUp(enemySpawner, playerGold);
     }
 }

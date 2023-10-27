@@ -19,9 +19,13 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField]
     private PlayerGold playerGold;
     private Wave curWave;
+    private int curEnemyCount;
     private List<Enemy> enmyList;
 
     public List<Enemy> EnemyList => enmyList;
+
+    public int CurEnemyCount => curEnemyCount;
+    public int MaxEnemyCount => curWave.maxEnemyCount;
 
     private void Awake()
     {
@@ -33,6 +37,8 @@ public class EnemySpawner : MonoBehaviour
     public void StartWave(Wave wave)
     {
         curWave = wave;
+
+        curEnemyCount = curWave.maxEnemyCount;
 
         StartCoroutine(SpawnEnemy());
     }
@@ -68,6 +74,7 @@ public class EnemySpawner : MonoBehaviour
         {
             playerGold.CurGold += gold;
         }
+        curEnemyCount--;
         enmyList.Remove(enemy);
         Destroy(enemy.gameObject);
     }

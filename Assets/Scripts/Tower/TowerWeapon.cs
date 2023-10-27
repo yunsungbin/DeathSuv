@@ -5,22 +5,36 @@ using UnityEngine;
 public class TowerWeapon : MonoBehaviour
 {
     [SerializeField]
+    private TowerTemplate towerTemplate;
+    [SerializeField]
     private GameObject projectilePregab;
     [SerializeField]
     private Transform spawnPoint;
-    [SerializeField]
-    private float attackRate = 0.5f;
-    [SerializeField]
-    private float attackRange = 2.0f;
-    [SerializeField]
-    private int attackDamage = 1;
+    //[SerializeField]
+    //private float attackRate = 0.5f;
+    //[SerializeField]
+    //private float attackRange = 2.0f;
+    //[SerializeField]
+    //private int attackDamage = 1;
+    private int level = 0;
     private WeaponState weaponState = WeaponState.SearchTarget;
     private Transform attackTarget = null;
+    private SpriteRenderer spriteRenderer;
     private EnemySpawner enemySpawner;
+    private PlayerGold playerGold;
 
-    public void SetUp(EnemySpawner enemySpawner)
+    public Sprite TowerSprite => towerTemplate.weapon[level].sprite;
+    public float Damage => towerTemplate.weapon[level].damage;
+    public float Rate => towerTemplate.weapon[level].rate;
+    public float Range => towerTemplate.weapon[level].range;
+    public int Level => level + 1;
+    public int MaxLevel => towerTemplate.weapon.Length;
+
+    public void SetUp(EnemySpawner enemySpawner, PlayerGold playerGold)
     {
+        spriteRenderer = GetComponent<SpriteRenderer>();
         this.enemySpawner = enemySpawner;
+        this.playerGold = playerGold;
 
         ChangeState(WeaponState.SearchTarget);
     }
@@ -39,7 +53,7 @@ public class TowerWeapon : MonoBehaviour
         if (attackTarget != null)
         {
             RotateToTarget();
-        }
+        }   
     }
 
     private void RotateToTarget()
@@ -61,7 +75,7 @@ public class TowerWeapon : MonoBehaviour
             {
                 float distance = Vector3.Distance(enemySpawner.EnemyList[i].transform.position, transform.position);
 
-                if (distance <= attackRange && distance <= closestDistSqr)
+                if (distance <= towerTemplate.weapon[level].range && distance <= closestDistSqr)
                 {
                     closestDistSqr = distance;
                     attackTarget = enemySpawner.EnemyList[i].transform;
@@ -88,14 +102,14 @@ public class TowerWeapon : MonoBehaviour
             }
 
             float distance = Vector2.Distance(attackTarget.position, transform.position);
-            if (distance > attackRange)
+            if (distance > towerTemplate.weapon[level].range)
             {
                 attackTarget = null;
                 ChangeState(WeaponState.SearchTarget);
                 break;
             }
 
-            yield return new WaitForSeconds(attackRate);
+            yield return new WaitForSeconds(towerTemplate.weapon[level].rate);
 
             SpawnProjectile();
         }
@@ -105,6 +119,20 @@ public class TowerWeapon : MonoBehaviour
     {
         GameObject clone = Instantiate(projectilePregab, spawnPoint.position, Quaternion.identity);
 
-        clone.GetComponent<projectile>().SetUp(attackTarget, attackDamage);
+        clone.GetComponent<projectile>().SetUp(attackTarget, towerTemplate.weapon[level].damage);
+    }
+
+    public bool Upgrade()
+    {
+        if(playerGold.CurGold < towerTemplate.weapon[level + 1].cost)
+        {
+            return false;
+        }
+
+        level++;
+        spriteRenderer.sprite = towerTemplate.weapon[level].sprite;
+        playerGold.CurGold -= towerTemplate.weapon[level].cost;
+
+        return true;
     }
 }
