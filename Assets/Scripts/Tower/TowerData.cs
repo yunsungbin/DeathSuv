@@ -20,6 +20,8 @@ public class TowerData : MonoBehaviour
     private TowerAttackRange towerAttackRange;
     [SerializeField]
     private Button buttonUpgrade;
+    [SerializeField]
+    private SystemTextView systemTextView;
 
     private TowerWeapon curTower;
     public void Awake()
@@ -76,7 +78,13 @@ public class TowerData : MonoBehaviour
         }
         else
         {
-            //∞ÒµÂ ∫Œ¡∑
+            systemTextView.PrintText(SystemType.Money);
         }
+    }
+
+    public void OnClickEventTowerSell()
+    {
+        curTower.Sell();
+        OffPanel();
     }
 }

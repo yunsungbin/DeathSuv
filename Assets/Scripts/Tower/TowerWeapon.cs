@@ -2,26 +2,30 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum WeaponType { Cannon = 0,}
+public enum WeaponState { SearchTarget = 0, TryAttackCannon, }//AttackToTarget }
+
 public class TowerWeapon : MonoBehaviour
 {
+    [Header("Commons")]
     [SerializeField]
     private TowerTemplate towerTemplate;
     [SerializeField]
-    private GameObject projectilePregab;
-    [SerializeField]
     private Transform spawnPoint;
-    //[SerializeField]
-    //private float attackRate = 0.5f;
-    //[SerializeField]
-    //private float attackRange = 2.0f;
-    //[SerializeField]
-    //private int attackDamage = 1;
+    [SerializeField]
+    private WeaponType weaponType;
+
+    [Header("Cannon")]
+    [SerializeField]
+    private GameObject projectilePregab;
+
     private int level = 0;
     private WeaponState weaponState = WeaponState.SearchTarget;
     private Transform attackTarget = null;
     private SpriteRenderer spriteRenderer;
     private EnemySpawner enemySpawner;
     private PlayerGold playerGold;
+    private Tile ownerTile;
 
     public Sprite TowerSprite => towerTemplate.weapon[level].sprite;
     public float Damage => towerTemplate.weapon[level].damage;
@@ -30,11 +34,12 @@ public class TowerWeapon : MonoBehaviour
     public int Level => level + 1;
     public int MaxLevel => towerTemplate.weapon.Length;
 
-    public void SetUp(EnemySpawner enemySpawner, PlayerGold playerGold)
+    public void SetUp(EnemySpawner enemySpawner, PlayerGold playerGold, Tile ownerTile)
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         this.enemySpawner = enemySpawner;
         this.playerGold = playerGold;
+        this.ownerTile = ownerTile;
 
         ChangeState(WeaponState.SearchTarget);
     }
@@ -84,7 +89,7 @@ public class TowerWeapon : MonoBehaviour
 
             if (attackTarget != null)
             {
-                ChangeState(WeaponState.AttackToTarget);
+                ChangeState(WeaponState.TryAttackCannon);
             }
 
             yield return null;
@@ -134,5 +139,14 @@ public class TowerWeapon : MonoBehaviour
         playerGold.CurGold -= towerTemplate.weapon[level].cost;
 
         return true;
+    }
+
+    public void Sell()
+    {
+        playerGold.CurGold += towerTemplate.weapon[level].sell;
+
+        ownerTile.IsBuildTower = false;
+
+        Destroy(gameObject);
     }
 }
