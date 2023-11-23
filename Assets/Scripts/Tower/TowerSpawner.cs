@@ -5,7 +5,7 @@ using UnityEngine;
 public class TowerSpawner : MonoBehaviour
 {
     [SerializeField]
-    private TowerTemplate towerTemplate;
+    private TowerTemplate[] towerTemplate;
     [SerializeField]
     private EnemySpawner enemySpawner; //적 리스트 정보
     [SerializeField]
@@ -14,14 +14,16 @@ public class TowerSpawner : MonoBehaviour
     private SystemTextView SystemTextView;
     private bool isOnTowerButton = false;
     private GameObject followTowerClone = null;
+    private int towerType;
 
-    public void ReadyToSpawneTower()
+    public void ReadyToSpawneTower(int type)
     {
+        towerType = type;
         if(isOnTowerButton == true)
         {
             return;
         }
-        if(towerTemplate.weapon[0].cost > playerGold.CurGold)
+        if(towerTemplate[towerType].weapon[0].cost > playerGold.CurGold)
         {
             SystemTextView.PrintText(SystemType.Money);
             return;
@@ -29,7 +31,7 @@ public class TowerSpawner : MonoBehaviour
 
         isOnTowerButton = true;
 
-        followTowerClone = Instantiate(towerTemplate.followTowerPrefab);
+        followTowerClone = Instantiate(towerTemplate[towerType].followTowerPrefab);
 
         StartCoroutine("OnTowerCancelSystem");
     }
@@ -52,11 +54,11 @@ public class TowerSpawner : MonoBehaviour
 
         tile.IsBuildTower = true;
 
-        playerGold.CurGold -= towerTemplate.weapon[0].cost;
+        playerGold.CurGold -= towerTemplate[towerType].weapon[0].cost;
 
         Vector3 pos = tileTransform.position + Vector3.back;
 
-        GameObject clone = Instantiate(towerTemplate.towerPrefab, pos, Quaternion.identity);
+        GameObject clone = Instantiate(towerTemplate[towerType].towerPrefab, pos, Quaternion.identity);
 
         clone.GetComponent<TowerWeapon>().SetUp(enemySpawner, playerGold, tile);
 
