@@ -8,8 +8,18 @@ public class MoveMent : MonoBehaviour
     private float moveSpeed = 0.0f;
     [SerializeField]
     private Vector3 moveDir = Vector3.zero;
+    private float baseMoveSpeed;
 
-    public float MoveSpeed => moveSpeed;
+    public float MoveSpeed
+    {
+        set => moveSpeed = Mathf.Max(0, value);
+        get => moveSpeed;
+    }
+
+    private void Awake()
+    {
+        baseMoveSpeed = moveSpeed;
+    }
 
     // Update is called once per frame
     void Update()
@@ -20,5 +30,10 @@ public class MoveMent : MonoBehaviour
     public void MoveTo(Vector3 dir)
     {
         moveDir = dir;
+    }
+
+    public void ResetMoveSpeed()
+    {
+        moveSpeed = baseMoveSpeed;
     }
 }
