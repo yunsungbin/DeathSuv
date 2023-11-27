@@ -42,6 +42,7 @@ public class TowerWeapon : MonoBehaviour
     public int Level => level + 1;
     public int MaxLevel => towerTemplate.weapon.Length;
     public float Slow => towerTemplate.weapon[level].slow;
+    public WeaponType WeaponType => weaponType;
 
     public void SetUp(EnemySpawner enemySpawner, PlayerGold playerGold, Tile ownerTile)
     {

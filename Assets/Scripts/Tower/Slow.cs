@@ -8,7 +8,7 @@ public class Slow : MonoBehaviour
 
     private void Awake()
     {
-        towerWeapon = GetComponent<TowerWeapon>();
+        towerWeapon = GetComponentInParent<TowerWeapon>();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

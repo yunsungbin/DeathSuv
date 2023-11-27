@@ -57,8 +57,18 @@ public class TowerData : MonoBehaviour
 
     private void UpdateTowerData()
     {
+        if(curTower.WeaponType == WeaponType.Cannon || curTower.WeaponType == WeaponType.Laser)
+        {
+            imageTower.rectTransform.sizeDelta = new Vector2(88, 59);
+            textDamage.text = "Damage : " + curTower.Damage;
+        }
+        else
+        {
+            imageTower.rectTransform.sizeDelta = new Vector2(59, 59);
+            textDamage.text = "Slow : " + curTower.Slow * 100 + "%";
+        }
+
         imageTower.sprite = curTower.TowerSprite;
-        textDamage.text = "Damage : " + curTower.Damage;
         textRate.text = "Rate : " + curTower.Rate;
         textRange.text = "Range : " + curTower.Range;
         textLevel.text = "Level : " + curTower.Level;
