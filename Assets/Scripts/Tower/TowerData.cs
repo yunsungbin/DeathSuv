@@ -17,6 +17,10 @@ public class TowerData : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI textLevel;
     [SerializeField]
+    private TextMeshProUGUI textUpgradeCost;
+    [SerializeField]
+    private TextMeshProUGUI textSellCost;
+    [SerializeField]
     private TowerAttackRange towerAttackRange;
     [SerializeField]
     private Button buttonUpgrade;
@@ -60,18 +64,27 @@ public class TowerData : MonoBehaviour
         if(curTower.WeaponType == WeaponType.Cannon || curTower.WeaponType == WeaponType.Laser)
         {
             imageTower.rectTransform.sizeDelta = new Vector2(88, 59);
-            textDamage.text = "Damage : " + curTower.Damage;
+            textDamage.text = "Damage : " + curTower.Damage + "+" + "<color=red>" + curTower.AddedDamage.ToString("F1") + "</color>";
         }
         else
         {
             imageTower.rectTransform.sizeDelta = new Vector2(59, 59);
-            textDamage.text = "Slow : " + curTower.Slow * 100 + "%";
+            if (curTower.WeaponType == WeaponType.Slow)
+            {
+                textDamage.text = "Slow : " + curTower.Slow * 100 + "%";
+            }
+            else if (curTower.WeaponType == WeaponType.Buff)
+            {
+                textDamage.text = "Buff : " + curTower.Buff * 100 + "%";
+            }
         }
 
         imageTower.sprite = curTower.TowerSprite;
         textRate.text = "Rate : " + curTower.Rate;
         textRange.text = "Range : " + curTower.Range;
         textLevel.text = "Level : " + curTower.Level;
+        textUpgradeCost.text = curTower.UpgradeCost.ToString();
+        textSellCost.text = curTower.SellCost.ToString();
 
         buttonUpgrade.interactable = curTower.Level < curTower.MaxLevel ? true : false;
     }
